@@ -1,33 +1,38 @@
 stages:
-  - lint
-  - build
-  # - deploy-test
+  # - lint
+  # - build
+  - deploy-test
   # - deploy-prod
 
-variables:
-  IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_PIPELINE_IID
+# variables:
+#   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_PIPELINE_IID
 
-Lint helm:
-  stage: lint
-  image: dtzar/helm-kubectl:3.10.0
+# Lint helm:
+#   stage: lint
+#   image: dtzar/helm-kubectl:3.10.0
+#   script:
+#     - helm lint .kube/vaultwarden
+
+
+# Build:
+#   stage: build
+#   image: docker:20.10.12
+#   services:
+#     - docker:20.10.12-dind
+#   before_script:
+#     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
+#   script:
+#     - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN 
+#     - docker build -t $IMAGE .
+#     - docker push $IMAGE
+
+Deploy Test:
+  stage: deploy-test
+  needs:
+    - Build
+  image: $CI_REGISTRY_IMAGE:11
   script:
-    - helm lint .kube/vaultwarden
-
-
-Build:
-  stage: build
-  image: docker:20.10.12
-  services:
-    - docker:20.10.12-dind
-  before_script:
-    - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-  script:
-    - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN 
-    - docker build -t $IMAGE .
-    - docker push $IMAGE
-
-# Deploy Test:
-#   # TODO
+  - echo $CI_REGISTRY_IMAGE:11
 
 # Stop Test:
 #   # TODO
