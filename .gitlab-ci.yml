@@ -10,6 +10,7 @@ variables:
 
 Lint helm:
   stage: lint
+  image: dtzar/helm-kubectl:3.10.0
   script:
     - helm lint .kube/vaultwarden
 
