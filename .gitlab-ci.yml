@@ -1,28 +1,37 @@
 stages:
-  - lint
-  - build
-  - deploy-test
-  - deploy-prod
+  - test_stage
+  # - lint
+  # - build
+  # - deploy-test
+  # - deploy-prod
 
-Lint helm:
-  # TODO
+variables:
+  imageName: $CI_REGISTRY_IMAGE
+  tag: $CI_PIPELINE_IID
 
-Build:
-  stage: build
-  image: docker:20.10.12
-  services:
-    - docker:20.10.12-dind
-  before_script:
-    - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-    - # TODO
-  script:
-    - # TODO
+Test stage:
+  stage: test_stage
+  script: echo $imageName $tag
 
-Deploy Test:
-  # TODO
+# Lint helm:
+#   # TODO
 
-Stop Test:
-  # TODO
+# Build:
+#   stage: build
+#   image: docker:20.10.12
+#   services:
+#     - docker:20.10.12-dind
+#   before_script:
+#     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
+#     - # TODO
+#   script:
+#     - # TODO
 
-Deploy Prod:
-  # TODO
+# Deploy Test:
+#   # TODO
+
+# Stop Test:
+#   # TODO
+
+# Deploy Prod:
+#   # TODO
