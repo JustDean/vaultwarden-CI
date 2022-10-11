@@ -8,11 +8,11 @@ stages:
 variables:
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_PIPELINE_IID
 
-Lint helm:
-  stage: lint
-  image: dtzar/helm-kubectl:3.10.0
-  script:
-    - helm lint .kube/vaultwarden
+# Lint helm:
+#   stage: lint
+#   image: dtzar/helm-kubectl:3.10.0
+#   script:
+#     - helm lint .kube/vaultwarden
 
 show image:
   stage: show-image
