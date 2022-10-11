@@ -19,18 +19,18 @@ show image:
   script:
     - echo $IMAGE
 
-Build:
-  stage: build
-  image: docker:20.10.12
-  services:
-    - docker:20.10.12-dind
-  before_script:
-    - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-    - # TODO
-  script:
-    - docker login -u gitlab-ci-token $CI_BUILD_TOKEN $CI_REGISTRY
-    - docker build -t $IMAGE .
-    - docker push $IMAGE
+# Build:
+#   stage: build
+#   image: docker:20.10.12
+#   services:
+#     - docker:20.10.12-dind
+#   before_script:
+#     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
+#     - # TODO
+#   script:
+#     - docker login -u gitlab-ci-token $CI_BUILD_TOKEN $CI_REGISTRY
+#     - docker build -t $IMAGE .
+#     - docker push $IMAGE
 
 # Deploy Test:
 #   # TODO
