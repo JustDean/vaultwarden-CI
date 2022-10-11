@@ -11,7 +11,7 @@ variables:
 Lint helm:
   stage: lint
   script:
-    - helm lint
+    - helm lint .kube/vaultwarden
 
 # Build:
 #   stage: build
