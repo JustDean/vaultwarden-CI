@@ -28,8 +28,8 @@ stages:
 
 Deploy Test:
   stage: deploy-test
-  needs:
-    - Build
+  # needs:
+  #   - Build
   image: $CI_REGISTRY_IMAGE:11
   script:
   - echo $CI_REGISTRY_IMAGE:11
