@@ -1,20 +1,17 @@
 stages:
-  - test_stage
-  # - lint
+  - lint
   # - build
   # - deploy-test
   # - deploy-prod
 
 variables:
-  imageName: $CI_REGISTRY_IMAGE
-  tag: $CI_PIPELINE_IID
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+  TAG: $CI_PIPELINE_IID
 
-Test stage:
-  stage: test_stage
-  script: echo $imageName $tag
-
-# Lint helm:
-#   # TODO
+Lint helm:
+  stage: lint
+  script:
+    - helm lint
 
 # Build:
 #   stage: build
