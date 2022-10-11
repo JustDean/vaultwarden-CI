@@ -1,0 +1,28 @@
+stages:
+  - lint
+  - build
+  - deploy-test
+  - deploy-prod
+
+Lint helm:
+  # TODO
+
+Build:
+  stage: build
+  image: docker:20.10.12
+  services:
+    - docker:20.10.12-dind
+  before_script:
+    - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
+    - # TODO
+  script:
+    - # TODO
+
+Deploy Test:
+  # TODO
+
+Stop Test:
+  # TODO
+
+Deploy Prod:
+  # TODO
