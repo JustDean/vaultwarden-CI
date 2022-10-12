@@ -4,8 +4,8 @@ stages:
   - deploy-test
   # - deploy-prod
 
-# variables:
-#   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_PIPELINE_IID
+variables:
+  IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:11
 
 # Lint helm:
 #   stage: lint
@@ -30,9 +30,18 @@ Deploy Test:
   stage: deploy-test
   # needs:
   #   - Build
-  image: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:11
+  variables:
+    namespace: vaultwarden-test
+  image: dtzar/helm-kubectl:3.10.0
+  before_script:
+  - >
+    - kubectl create secret docker-registry registry-credentials \
+    -- docker-server=$(CI_REGISTRY) \
+    -- docker-username=$(CI_DEPLOY_USER) \
+    -- doccker-password=$(CI_DEPLOY_PASSWORD) \
+    -o yaml -- dry-run | kubectl apply -n $namespace -f -
   script:
-  - echo $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:11
+  - helm -n vaultwarden-test upgrade --install vaultwarden .kube/vaultwarden
 
 # Stop Test:
 #   # TODO
