@@ -34,12 +34,13 @@ Deploy Test:
     NAMESPACE: vaultwarden-test
   image: dtzar/helm-kubectl:3.10.0
   before_script:
-  - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
   - >
-   kubectl create secret docker-registry registry-credentials ${CI_REGISTRY} \
+   kubectl create secret docker-registry registry-credentials \
+   - n $NAMESPACE ${CI_REGISTRY} \
+   --docker-server=${CI_REGISTRY} \
    --docker-username=${CI_DEPLOY_USER} \
    --docker-password=${CI_DEPLOY_PASSWORD} \
-   -o yaml --dry-run=client | kubectl apply -n $NAMESPACE -f -
+   -o yaml --dry-run=server
   script:
     - helm -n vaultwarden-test upgrade --install vaultwarden .kube/vaultwarden
 
