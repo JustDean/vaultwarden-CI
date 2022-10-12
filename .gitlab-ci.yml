@@ -35,8 +35,8 @@ Deploy Test:
   image: dtzar/helm-kubectl:3.10.0
   before_script:
   - >
-   kubectl create secret docker-registry registry-credentials \
-   -n $NAMESPACE ${CI_REGISTRY} \
+   kubectl create secret docker-registry registry-credentials \ 
+   -n $NAMESPACE \
    --docker-server=${CI_REGISTRY} \
    --docker-username=${CI_DEPLOY_USER} \
    --docker-password=${CI_DEPLOY_PASSWORD} \
