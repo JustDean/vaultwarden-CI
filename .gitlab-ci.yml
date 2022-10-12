@@ -36,9 +36,9 @@ Deploy Test:
   before_script:
   - >
    kubectl create secret docker-registry registry-credentials \
-   --docker-server=$CI_REGISTRY \
-   --docker-username=$CI_DEPLOY_USER \
-   --docker-password=$CI_DEPLOY_PASSWORD \
+   --docker-server="${CI_REGISTRY}" \
+   --docker-username="${CI_DEPLOY_USER}" \
+   --docker-password="${CI_DEPLOY_PASSWORD}" \
    -o yaml --dry-run=client | cat
   script:
     - helm -n vaultwarden-test upgrade --install vaultwarden .kube/vaultwarden
