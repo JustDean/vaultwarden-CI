@@ -36,7 +36,7 @@ Deploy Test:
   before_script:
   - >
    kubectl create secret docker-registry registry-credentials \
-   - n $NAMESPACE ${CI_REGISTRY} \
+   -n $NAMESPACE ${CI_REGISTRY} \
    --docker-server=${CI_REGISTRY} \
    --docker-username=${CI_DEPLOY_USER} \
    --docker-password=${CI_DEPLOY_PASSWORD} \
