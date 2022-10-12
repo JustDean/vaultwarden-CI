@@ -34,6 +34,7 @@ Deploy Test:
     NAMESPACE: vaultwarden-test
   image: dtzar/helm-kubectl:3.10.0
   before_script:
+  - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
   - >
    kubectl create secret docker-registry registry-credentials ${CI_REGISTRY} \
    --docker-username=${CI_DEPLOY_USER} \
