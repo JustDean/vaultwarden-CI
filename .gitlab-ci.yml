@@ -34,13 +34,7 @@ Deploy Test:
     NAMESPACE: vaultwarden-test
   image: dtzar/helm-kubectl:3.10.0
   before_script:
-  - >
-   kubectl create secret docker-registry registry-credentials \ 
-   -n $NAMESPACE \
-   --docker-server=${CI_REGISTRY} \
-   --docker-username=${CI_DEPLOY_USER} \
-   --docker-password=${CI_DEPLOY_PASSWORD} \
-   -o yaml --dry-run=server
+    - kubectl create secret docker-registry registry-credentials -n $NAMESPACE --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD} -o yaml --dry-run=server
   script:
     - helm -n vaultwarden-test upgrade --install vaultwarden .kube/vaultwarden
 
