@@ -5,7 +5,8 @@ stages:
   # - deploy-prod
 
 variables:
-  IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:11
+  IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
+  VERSION: 11
 
 # Lint helm:
 #   stage: lint
@@ -23,8 +24,8 @@ variables:
 #     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
 #   script:
 #     - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN 
-#     - docker build -t $IMAGE .
-#     - docker push $IMAGE
+#     - docker build -t $IMAGE:$VERSION .
+#     - docker push $IMAGE:$VERSION
 
 Deploy Test:
   stage: deploy-test
