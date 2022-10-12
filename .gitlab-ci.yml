@@ -41,7 +41,7 @@ Deploy Test:
     --docker-server=$CI_REGISTRY 
     --docker-username=$CI_DEPLOY_USER
     --docker-password=$CI_DEPLOY_PASSWORD
-    -o yaml --dry-run=server | kubectl -n $NAMESPACE -f -
+    -o yaml --dry-run=server | kubectl -n $NAMESPACE apply -f -
   script:
     - helm -n vaultwarden-test --set vaultwarden.image.repository=$IMAGE upgrade --install vaultwarden .kube/vaultwarden
 
