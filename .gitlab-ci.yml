@@ -31,7 +31,7 @@ Deploy Test:
   # needs:
   #   - Build
   variables:
-    namespace: vaultwarden-test
+    NAMESPACE: vaultwarden-test
   image: dtzar/helm-kubectl:3.10.0
   before_script:
   - >
