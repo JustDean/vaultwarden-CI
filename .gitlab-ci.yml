@@ -12,8 +12,8 @@ variables:
 # Lint helm:
 #   stage: lint
 #   image: dtzar/helm-kubectl:3.10.0
-#   script:
-#     - helm lint .kube/vaultwarden
+  # script:
+  #   - helm lint .kube/vaultwarden
 
 
 # Build:
@@ -59,8 +59,14 @@ Deploy Test:
     NAMESPACE: vaultwarden-test
   image: dtzar/helm-kubectl:3.10.0
 
-# Stop Test:
-#   # TODO
+Stop Test:
+  stage: deploy-test
+  when: manual
+  variables:
+    NAMESPACE: vaultwarden-test
+  image: dtzar/helm-kubectl:3.10.0
+  script:
+    - helm -n $NAMESPACE uninstall $NAMESPACE
 
 # Deploy Prod:
 #   stage: deploy-prod
