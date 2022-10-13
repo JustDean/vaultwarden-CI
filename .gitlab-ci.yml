@@ -5,19 +5,22 @@ stages:
   - deploy-prod
 
 variables:
+  HELM_IMAGE: dtzar/helm-kubectl:3.10.0
   DOMAIN: .dolinskiydmitri-552.metaclass-st.ru
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
   VERSION: $CI_PIPELINE_IID
 
 Lint helm:
   stage: lint
-  image: dtzar/helm-kubectl:3.10.0
+  image: $HELM_IMAGE
   script:
     - helm lint .kube/vaultwarden
 
 
 Build:
   stage: build
+  needs:
+    - Lint helm
   image: docker:20.10.12
   services:
     - docker:20.10.12-dind
@@ -28,13 +31,7 @@ Build:
     - docker build -t $IMAGE:$VERSION .
     - docker push ${IMAGE}:${VERSION}
 
-.create_namespace:
-  allow_failure: true
-  before_script:
-    - kubectl create namespace $NAMESPACE
-
 .deploy_chart:
-  extends: .create_namespace
   before_script:
     - >
       kubectl create secret docker-registry registry-credentials 
@@ -44,12 +41,12 @@ Build:
       -o yaml --dry-run=client | kubectl -n $NAMESPACE apply -f - || true
   script:
     - > 
-        helm -n $NAMESPACE upgrade
-        --set vaultwarden.image.repository=$IMAGE
-        --set vaultwarden.image.tag=$VERSION
-        --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
-        --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
-        --install $NAMESPACE .kube/vaultwarden
+      helm -n $NAMESPACE upgrade
+      --set vaultwarden.image.repository=$IMAGE
+      --set vaultwarden.image.tag=$VERSION
+      --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
+      --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
+      --install $NAMESPACE .kube/vaultwarden
 
 Deploy Test:
   stage: deploy-test
@@ -58,15 +55,17 @@ Deploy Test:
     - Build
   variables:
     NAMESPACE: vaultwarden-test
-  image: dtzar/helm-kubectl:3.10.0
+  image: $HELM_IMAGE
 
 Stop Test:
   stage: deploy-test
   when: manual
+  needs:
+    - Deploy Test
   variables:
     NAMESPACE: vaultwarden-test
     ADMIN_PASSWORD: adminadmin
-  image: dtzar/helm-kubectl:3.10.0
+  image: $HELM_IMAGE
   script:
     - helm -n $NAMESPACE uninstall $NAMESPACE
 
@@ -76,7 +75,8 @@ Deploy Prod:
   when: manual
   needs:
     - Build
+    - Deploy Test
   variables:
     NAMESPACE: vaultwarden-prod
     ADMIN_PASSWORD: adminadminadmin
-  image: dtzar/helm-kubectl:3.10.0
+  image: $HELM_IMAGE
