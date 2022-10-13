@@ -5,6 +5,7 @@ stages:
   # - deploy-prod
 
 variables:
+  DOMAIN: .dolinskiydmitri-552.metaclass-st.ru
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
   VERSION: 11
 
@@ -22,10 +23,10 @@ variables:
 #     - docker:20.10.12-dind
 #   before_script:
 #     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
+#     - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
 #   script:
-#     - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN 
 #     - docker build -t $IMAGE:$VERSION .
-#     - docker push $IMAGE:$VERSION
+#     - docker push ${IMAGE}:${VERSION}
 
 .create_namespace:
   allow_failure: true
@@ -43,10 +44,11 @@ variables:
       -o yaml --dry-run=client | kubectl -n $NAMESPACE apply -f - || true
   script:
     - > 
-        helm -n $NAMESPACE 
-        --set vaultwarden.image.repository=$IMAGE 
-        --set vaultwarden.ingress.domain=$DOMAIN 
-        upgrade --install $NAMESPACE .kube/vaultwarden
+        helm -n $NAMESPACE upgrade
+        --set vaultwarden.image.repository=$IMAGE
+        --set vaultwarden.image.tag=$VERSION
+        --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
+        --install $NAMESPACE .kube/vaultwarden
 
 Deploy Test:
   stage: deploy-test
@@ -55,7 +57,6 @@ Deploy Test:
   #   - Build
   variables:
     NAMESPACE: vaultwarden-test
-    DOMAIN: vaultwarden-test.dolinskiydmitri-552.metaclass-st.ru
   image: dtzar/helm-kubectl:3.10.0
 
 # Stop Test:
