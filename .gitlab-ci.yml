@@ -1,39 +1,39 @@
 stages:
-  # - lint
-  # - build
+  - lint
+  - build
   - deploy-test
-  # - deploy-prod
+  - deploy-prod
 
 variables:
   DOMAIN: .dolinskiydmitri-552.metaclass-st.ru
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
-  VERSION: 11
+  VERSION: $CI_PIPELINE_IID
 
-# Lint helm:
-#   stage: lint
-#   image: dtzar/helm-kubectl:3.10.0
-  # script:
-  #   - helm lint .kube/vaultwarden
+Lint helm:
+  stage: lint
+  image: dtzar/helm-kubectl:3.10.0
+  script:
+    - helm lint .kube/vaultwarden
 
 
-# Build:
-#   stage: build
-#   image: docker:20.10.12
-#   services:
-#     - docker:20.10.12-dind
-#   before_script:
-#     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-#     - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
-#   script:
-#     - docker build -t $IMAGE:$VERSION .
-#     - docker push ${IMAGE}:${VERSION}
+Build:
+  stage: build
+  image: docker:20.10.12
+  services:
+    - docker:20.10.12-dind
+  before_script:
+    - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
+    - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
+  script:
+    - docker build -t $IMAGE:$VERSION .
+    - docker push ${IMAGE}:${VERSION}
 
 .create_namespace:
   allow_failure: true
   before_script:
     - kubectl create namespace $NAMESPACE
 
-.create_secret:
+.deploy_chart:
   extends: .create_namespace
   before_script:
     - >
@@ -52,9 +52,9 @@ variables:
 
 Deploy Test:
   stage: deploy-test
-  extends: .create_secret
-  # needs:
-  #   - Build
+  extends: .deploy_chart
+  needs:
+    - Build
   variables:
     NAMESPACE: vaultwarden-test
   image: dtzar/helm-kubectl:3.10.0
@@ -68,7 +68,12 @@ Stop Test:
   script:
     - helm -n $NAMESPACE uninstall $NAMESPACE
 
-# Deploy Prod:
-#   stage: deploy-prod
-#   variables:
-#      DOMAIN: vaultwarden-prod.dolinskiydmitri-552.metaclass-st.ru
+Deploy Prod:
+  stage: deploy-prod
+  extends: .deploy_chart
+  when: manual
+  needs:
+    - Build
+  variables:
+    NAMESPACE: vaultwarden-prod
+  image: dtzar/helm-kubectl:3.10.0
