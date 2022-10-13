@@ -27,26 +27,41 @@ variables:
 #     - docker build -t $IMAGE:$VERSION .
 #     - docker push $IMAGE:$VERSION
 
+.create_namespace:
+  allow_failure: true
+  before_script:
+    - kubectl create namespace $NAMESPACE
+
+.create_secret:
+  extends: .create_namespace
+  allow_failure: true
+  before_script:
+    - >
+      kubectl create secret docker-registry registry-credentials 
+      --docker-server=$CI_REGISTRY 
+      --docker-username=$CI_DEPLOY_USER
+      --docker-password=$CI_DEPLOY_PASSWORD
+      -o yaml --dry-run=client | kubectl -n $NAMESPACE apply -f - || true
+  script:
+    - > 
+        helm -n $NAMESPACE 
+        --set vaultwarden.image.repository=$IMAGE vaultwarden.ingress.domain=$DOMAIN 
+        upgrade --install vaultwarden .kube/vaultwarden
+
 Deploy Test:
   stage: deploy-test
+  extends: .create_secret
   # needs:
   #   - Build
   variables:
     NAMESPACE: vaultwarden-test
+    DOMAIN: vaultwarden-test.dolinskiydmitri-552.metaclass-st.ru
   image: dtzar/helm-kubectl:3.10.0
-  before_script:
-  - >
-    kubectl create secret docker-registry registry-credentials 
-    -n $NAMESPACE 
-    --docker-server=$CI_REGISTRY 
-    --docker-username=$CI_DEPLOY_USER
-    --docker-password=$CI_DEPLOY_PASSWORD
-    -o yaml --dry-run=server | kubectl -n $NAMESPACE apply -f -
-  script:
-    - helm -n vaultwarden-test --set vaultwarden.image.repository=$IMAGE upgrade --install vaultwarden .kube/vaultwarden
 
 # Stop Test:
 #   # TODO
 
 # Deploy Prod:
-#   # TODO
+#   stage: deploy-prod
+#   variables:
+#      DOMAIN: vaultwarden-prod.dolinskiydmitri-552.metaclass-st.ru
