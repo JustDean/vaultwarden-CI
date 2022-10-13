@@ -34,7 +34,6 @@ variables:
 
 .create_secret:
   extends: .create_namespace
-  allow_failure: true
   before_script:
     - >
       kubectl create secret docker-registry registry-credentials 
