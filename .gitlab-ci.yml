@@ -7,7 +7,7 @@ stages:
 variables:
   HELM_IMAGE: dtzar/helm-kubectl:3.10.0
   DOMAIN: .dolinskiydmitri-552.metaclass-st.ru
-  IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
+  IMAGE: $CI_REGISTRY_IMAGE
   VERSION: $CI_PIPELINE_IID
 
 Lint helm:
