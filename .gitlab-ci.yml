@@ -48,6 +48,7 @@ Build:
       --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
       --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
       --install $NAMESPACE .kube/vaultwarden
+      --wait
 
 Deploy Test:
   stage: deploy-test
