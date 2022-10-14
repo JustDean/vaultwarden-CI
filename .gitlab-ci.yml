@@ -42,7 +42,7 @@ Build:
   script:
     - > 
       helm -n $NAMESPACE upgrade
-      --set fullnameOverride=$IMAGE
+      --set fullnameOverride=$NAMESPACE
       --set vaultwarden.image.repository=$IMAGE
       --set vaultwarden.image.tag=$VERSION
       --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
