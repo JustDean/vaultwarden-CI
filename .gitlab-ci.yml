@@ -47,6 +47,7 @@ Build:
       --set vaultwarden.image.tag=$VERSION
       --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
       --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
+      --set vaultwarden.ingress.tls.secretName=${NAMESPACE}-tls
       --install $NAMESPACE .kube/vaultwarden
       --wait
 
