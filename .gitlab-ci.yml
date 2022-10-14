@@ -8,7 +8,7 @@ variables:
   HELM_IMAGE: dtzar/helm-kubectl:3.10.0
   DOMAIN: .dolinskiydmitri-552.metaclass-st.ru
   IMAGE: $CI_REGISTRY_IMAGE
-  VERSION: $CI_PIPELINE_IID
+  VERSION: 55
 
 Lint helm:
   stage: lint
@@ -28,8 +28,8 @@ Build:
     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
     - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
   script:
-    - docker build -t $IMAGE:$VERSION .
-    - docker push ${IMAGE}:${VERSION}
+    - docker build -t $IMAGE:$CI_PIPELINE_IID .
+    - docker push ${IMAGE}:${CI_PIPELINE_IID}
 
 .deploy_chart:
   before_script:
