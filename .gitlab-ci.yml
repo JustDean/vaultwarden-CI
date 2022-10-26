@@ -1,6 +1,7 @@
+# METAINFO
 stages:
   - lint
-  # - build
+  - build
   - deploy-test
   - deploy-prod
 
@@ -8,29 +9,28 @@ variables:
   HELM_IMAGE: dtzar/helm-kubectl:3.10.0
   DOMAIN: .dolinskiydmitri-552.metaclass-st.ru
   IMAGE: $CI_REGISTRY_IMAGE
-  # VERSION: $CI_PIPELINE_IID
-  VERSION: 65
+  VERSION: $CI_PIPELINE_IID
 
+# STAGES
 Lint helm:
   stage: lint
   image: $HELM_IMAGE
   script:
     - helm lint .kube/vaultwarden
 
-
-# Build:
-#   stage: build
-#   needs:
-#     - Lint helm
-#   image: docker:20.10.12
-#   services:
-#     - docker:20.10.12-dind
-#   before_script:
-#     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-#     - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
-#   script:
-#     - docker build -t $IMAGE:$VERSION .
-#     - docker push ${IMAGE}:${VERSION}
+Build:
+  stage: build
+  needs:
+    - Lint helm
+  image: docker:20.10.12
+  services:
+    - docker:20.10.12-dind
+  before_script:
+    - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
+    - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
+  script:
+    - docker build -t $IMAGE:$VERSION .
+    - docker push ${IMAGE}:${VERSION}
 
 .deploy_chart:
   before_script:
@@ -56,10 +56,11 @@ Lint helm:
 Deploy Test:
   stage: deploy-test
   extends: .deploy_chart
-  # needs:
-  #   - Build
+  needs:
+    - Build
   variables:
     NAMESPACE: vaultwarden-test
+    ADMIN_PASSWORD: adminadmin
   image: $HELM_IMAGE
 
 Stop Test:
@@ -69,18 +70,16 @@ Stop Test:
     - Deploy Test
   variables:
     NAMESPACE: vaultwarden-test
-    ADMIN_PASSWORD: adminadmin
   image: $HELM_IMAGE
   script:
-    - helm -n $NAMESPACE uninstall $NAMESPACE
+    - helm -n $NAMESPACE uninstall $NAMESPACE --wait
 
 Deploy Prod:
   stage: deploy-prod
   extends: .deploy_chart
   when: manual
   needs:
-    # - Build
-    - Deploy Test
+    - Build
   variables:
     NAMESPACE: vaultwarden-prod
     ADMIN_PASSWORD: adminadminadmin
