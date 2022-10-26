@@ -49,6 +49,7 @@ Build:
       --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
       --set vaultwarden.ingress.tls.secretName=${NAMESPACE}-tls
       --install $NAMESPACE .kube/vaultwarden
+      --create-namespace
       --wait
 
 Deploy Test:
