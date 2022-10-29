@@ -7,10 +7,10 @@ stages:
 
 variables:
   HELM_IMAGE: dtzar/helm-kubectl:3.10.0
-  DOMAIN: .dolinskiydmitri-552.metaclass-st.ru
+  DOMAIN: .dolinskiydmitri-577.metaclass-st.ru
   IMAGE: $CI_REGISTRY_IMAGE
   # VERSION: $CI_PIPELINE_IID
-  VERSION: 66
+  VERSION: 64
 
 # STAGES
 Lint helm:
