@@ -61,7 +61,7 @@ Deploy Test:
   #   - Build
   variables:
     NAMESPACE: vaultwarden-test
-    ADMIN_PASSWORD: adminadmin
+    ADMIN_PASSWORD: testadminpassword
   image: $HELM_IMAGE
 
 Stop Test:
@@ -83,5 +83,5 @@ Deploy Prod:
   #   - Build
   variables:
     NAMESPACE: vaultwarden-prod
-    ADMIN_PASSWORD: adminadminadmin
+    ADMIN_PASSWORD: prodadminpassword
   image: $HELM_IMAGE
