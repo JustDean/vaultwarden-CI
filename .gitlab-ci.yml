@@ -67,8 +67,8 @@ Deploy Test:
 Stop Test:
   stage: deploy-test
   when: manual
-  needs:
-    - Deploy Test
+  # needs:
+  #   - Deploy Test
   variables:
     NAMESPACE: vaultwarden-test
   image: $HELM_IMAGE
