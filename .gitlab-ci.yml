@@ -52,7 +52,7 @@ Lint helm:
       --set vaultwarden.ingress.tls.secretName=${NAMESPACE}-tls
       --set vaultwarden.admin.token=${ADMIN_TOKEN}
       --set vaultwarden.pg.password=${POSTGRES_PASSWORD}
-      --set vaultwarden.persist.enabled=${PERSIST_STATUS}
+      --set vaultwarden.pg.persist.enabled=${PERSIST_STATUS}
       --install $NAMESPACE .kube/vaultwarden
       --create-namespace
       --wait
@@ -91,5 +91,5 @@ Deploy Prod:
   variables:
     NAMESPACE: vaultwarden-prod
     ADMIN_PASSWORD: prodadminpassword
-    PERSIST_STATUS: true
+    PERSIST_STATUS: 'true'
   image: $HELM_IMAGE
