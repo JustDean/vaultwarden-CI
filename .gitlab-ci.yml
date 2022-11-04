@@ -36,7 +36,7 @@ Lint helm:
 .deploy_chart:
   before_script:
     - >
-      kubectl create secret docker-registry registry-credentials 
+      kubectl create secret docker-registrytest registry-credentials 
       --docker-server=$CI_REGISTRY 
       --docker-username=$CI_DEPLOY_USER
       --docker-password=$CI_DEPLOY_PASSWORD
@@ -50,6 +50,10 @@ Lint helm:
       --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
       --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
       --set vaultwarden.ingress.tls.secretName=${NAMESPACE}-tls
+
+      --set vaultwarden.admin.token=${ADMIN_TOKEN}
+      --set vaultwarden.pg.password=${POSTGRES_PASSWORD}
+
       --install $NAMESPACE .kube/vaultwarden
       --create-namespace
       --wait
@@ -69,6 +73,7 @@ Stop Test:
   when: manual
   # needs:
   #   - Deploy Test
+  environment: test
   variables:
     NAMESPACE: vaultwarden-test
   image: $HELM_IMAGE
@@ -81,6 +86,7 @@ Deploy Prod:
   when: manual
   # needs:
   #   - Build
+  environment: prod
   variables:
     NAMESPACE: vaultwarden-prod
     ADMIN_PASSWORD: prodadminpassword
