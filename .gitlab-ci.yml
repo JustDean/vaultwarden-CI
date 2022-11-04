@@ -63,6 +63,7 @@ Deploy Test:
   extends: .deploy_chart
   # needs:
   #   - Build
+  environment: test
   variables:
     NAMESPACE: vaultwarden-test
     ADMIN_PASSWORD: testadminpassword
