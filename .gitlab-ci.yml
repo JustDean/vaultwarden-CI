@@ -36,7 +36,7 @@ Lint helm:
 .deploy_chart:
   before_script:
     - >
-      kubectl create secret docker-registrytest registry-credentials 
+      kubectl create secret docker-registry registry-credentials 
       --docker-server=$CI_REGISTRY 
       --docker-username=$CI_DEPLOY_USER
       --docker-password=$CI_DEPLOY_PASSWORD
