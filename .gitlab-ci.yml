@@ -66,7 +66,7 @@ Deploy Test:
   variables:
     NAMESPACE: vaultwarden-test
     ADMIN_PASSWORD: testadminpassword
-    PERSIST_STATUS: 'false'
+    PERSIST_STATUS: "false"
   image: $HELM_IMAGE
 
 Stop Test:
@@ -91,5 +91,5 @@ Deploy Prod:
   variables:
     NAMESPACE: vaultwarden-prod
     ADMIN_PASSWORD: prodadminpassword
-    PERSIST_STATUS: 'true'
+    PERSIST_STATUS: "true"
   image: $HELM_IMAGE
