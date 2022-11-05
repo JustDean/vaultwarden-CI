@@ -51,8 +51,8 @@ Lint helm:
       --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
       --set vaultwarden.ingress.tls.secretName=${NAMESPACE}-tls
       --set vaultwarden.admin.token=${ADMIN_TOKEN}
-      --set vaultwarden.pg.password=${POSTGRES_PASSWORD}
-      --set vaultwarden.pg.persist.enabled=${PERSIST_STATUS}
+      --set pg.password=${POSTGRES_PASSWORD}
+      --set pg.persist.enabled=${PERSIST_STATUS}
       --install $NAMESPACE .kube/vaultwarden
       --create-namespace
       --wait
