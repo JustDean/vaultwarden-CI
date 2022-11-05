@@ -28,7 +28,7 @@ Build:
     - docker:20.10.12-dind
   before_script:
     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-    - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_DEPLOY_PASSWORD
+    - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
   script:
     - docker build -t $IMAGE:$VERSION .
     - docker push ${IMAGE}:${VERSION}
