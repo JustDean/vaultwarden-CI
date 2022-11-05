@@ -10,7 +10,6 @@ variables:
   DOMAIN: .dolinskiydmitri-577.metaclass-st.ru
   IMAGE: $CI_REGISTRY_IMAGE
   VERSION: $CI_PIPELINE_IID
-  # VERSION: 64
 
 # STAGES
 Lint helm:
@@ -28,7 +27,7 @@ Build:
     - docker:20.10.12-dind
   before_script:
     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
   script:
     - docker build -t $IMAGE:$VERSION .
     - docker push ${IMAGE}:${VERSION}
@@ -36,13 +35,13 @@ Build:
 .deploy_chart:
   before_script:
     - >
-      kubectl create secret docker-registry registry-credentials 
+      kubectl create secret docker-registry registry-credentials
+      --docker-server=${CI_REGISTRY}
       --docker-username=${CI_DEPLOY_USER}
       --docker-password=${CI_DEPLOY_PASSWORD}
-      --docker-server=${CI_REGISTRY} 
       -o yaml --dry-run=client | kubectl -n $NAMESPACE apply -f - || true
   script:
-    - > 
+    - >
       helm -n $NAMESPACE upgrade
       --set fullnameOverride=$NAMESPACE
       --set vaultwarden.image.repository=$IMAGE
@@ -91,7 +90,7 @@ Deploy Prod:
   when: manual
   needs:
     - Build
-  environment: 
+  environment:
     name: prod
   variables:
     NAMESPACE: vaultwarden-prod
