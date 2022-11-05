@@ -28,7 +28,7 @@ Build:
     - docker:20.10.12-dind
   before_script:
     - i=0; while [ "$i" -lt 12 ]; do docker info && break; sleep 5; i=$(( i + 1 )) ; done
-    - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_BUILD_TOKEN
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   script:
     - docker build -t $IMAGE:$VERSION .
     - docker push ${IMAGE}:${VERSION}
@@ -37,9 +37,9 @@ Build:
   before_script:
     - >
       kubectl create secret docker-registry registry-credentials 
-      --docker-server=$CI_REGISTRY 
-      --docker-username=$CI_DEPLOY_USER
-      --docker-password=$CI_DEPLOY_PASSWORD
+      --docker-username=${CI_DEPLOY_USER}
+      --docker-password=${CI_DEPLOY_PASSWORD}
+      --docker-server=${CI_REGISTRY} 
       -o yaml --dry-run=client | kubectl -n $NAMESPACE apply -f - || true
   script:
     - > 
@@ -62,7 +62,9 @@ Deploy Test:
   extends: .deploy_chart
   needs:
     - Build
-  environment: test
+  environment:
+    name: test
+    on_stop: Stop Test
   variables:
     NAMESPACE: vaultwarden-test
     ADMIN_PASSWORD: testadminpassword
@@ -74,7 +76,9 @@ Stop Test:
   when: manual
   needs:
     - Deploy Test
-  environment: test
+  environment:
+    name: test
+    action: stop
   variables:
     NAMESPACE: vaultwarden-test
   image: $HELM_IMAGE
@@ -87,7 +91,8 @@ Deploy Prod:
   when: manual
   needs:
     - Build
-  environment: prod
+  environment: 
+    name: prod
   variables:
     NAMESPACE: vaultwarden-prod
     ADMIN_PASSWORD: prodadminpassword
