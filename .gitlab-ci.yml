@@ -35,11 +35,10 @@ Build:
 .deploy_chart:
   before_script:
     - >
-      kubectl create secret docker-registry registry-credentials
-      --docker-server=${CI_REGISTRY}
-      --docker-username=${CI_DEPLOY_USER}
-      --docker-password=${CI_DEPLOY_PASSWORD}
-      -o yaml --dry-run=client | kubectl -n $NAMESPACE apply -f - || true
+      kubectl -n ${NAMESPACE} create secret docker-registry registry-credentials 
+      --docker-server=${CI_REGISTRY} 
+      --docker-username=${CI_DEPLOY_USER} 
+      --docker-password=${CI_DEPLOY_PASSWORD} || true
   script:
     - >
       helm -n $NAMESPACE upgrade
