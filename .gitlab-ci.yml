@@ -35,6 +35,7 @@ Build:
 .deploy_chart:
   before_script:
     - >
+      echo `${CI_DEPLOY_USER} with ${CI_DEPLOY_PASSWORD} at ${CI_REGISTRY}` &&
       kubectl -n ${NAMESPACE} create secret docker-registry registry-credentials 
       --docker-server=${CI_REGISTRY} 
       --docker-username=${CI_DEPLOY_USER} 
@@ -46,7 +47,6 @@ Build:
       --set vaultwarden.image.repository=$IMAGE
       --set vaultwarden.image.tag=$VERSION
       --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
-      --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
       --set vaultwarden.ingress.tls.secretName=${NAMESPACE}-tls
       --set vaultwarden.admin.token=${ADMIN_TOKEN}
       --set pg.password=${POSTGRES_PASSWORD}
@@ -63,10 +63,6 @@ Deploy Test:
   environment:
     name: test
     on_stop: Stop Test
-  variables:
-    NAMESPACE: vaultwarden-test
-    ADMIN_PASSWORD: testadminpassword
-    PERSIST_STATUS: "false"
   image: $HELM_IMAGE
 
 Stop Test:
@@ -77,8 +73,6 @@ Stop Test:
   environment:
     name: test
     action: stop
-  variables:
-    NAMESPACE: vaultwarden-test
   image: $HELM_IMAGE
   script:
     - helm -n $NAMESPACE uninstall $NAMESPACE --wait
@@ -91,8 +85,4 @@ Deploy Prod:
     - Build
   environment:
     name: prod
-  variables:
-    NAMESPACE: vaultwarden-prod
-    ADMIN_PASSWORD: prodadminpassword
-    PERSIST_STATUS: "true"
   image: $HELM_IMAGE
