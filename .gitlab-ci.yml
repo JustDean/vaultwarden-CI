@@ -49,6 +49,7 @@ Build:
       --set vaultwarden.ingress.domain=${NAMESPACE}${DOMAIN}
       --set vaultwarden.ingress.tls.secretName=${NAMESPACE}-tls
       --set vaultwarden.admin.token=${ADMIN_TOKEN}
+      --set vaultwarden.admin.basicAuth.password=${ADMIN_PASSWORD}
       --set pg.password=${POSTGRES_PASSWORD}
       --set pg.persist.enabled=${PERSIST_STATUS}
       --install $NAMESPACE .kube/vaultwarden
