@@ -34,8 +34,8 @@ Build:
 
 .deploy_chart:
   before_script:
+    - kubectl create namespace ${NAMESPACE} || true
     - >
-      echo `${CI_DEPLOY_USER} with ${CI_DEPLOY_PASSWORD} at ${CI_REGISTRY}` &&
       kubectl -n ${NAMESPACE} create secret docker-registry registry-credentials 
       --docker-server=${CI_REGISTRY} 
       --docker-username=${CI_DEPLOY_USER} 
@@ -52,7 +52,6 @@ Build:
       --set pg.password=${POSTGRES_PASSWORD}
       --set pg.persist.enabled=${PERSIST_STATUS}
       --install $NAMESPACE .kube/vaultwarden
-      --create-namespace
       --wait
 
 Deploy Test:
